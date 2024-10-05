@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CspReport;
 use App\Models\Domain;
+use Illuminate\Support\Facades\Log;
 
 class CspController extends Controller
 {
@@ -56,8 +57,17 @@ class CspController extends Controller
                 'domain_id' => $domain->id,
             ]);
 
+            // Log the successful report creation
+            Log::info('CSP Report successfully stored', ['report' => $report]);
+
             return response()->json(['status' => 'Report received'], 200);
         } catch (\Exception $e) {
+            // Log any exceptions that occur
+            Log::error('Failed to process CSP report', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             // Return detailed error message for debugging
             return response()->json(['error' => 'Failed to process the CSP report',
                 'message' => $e->getMessage(),
