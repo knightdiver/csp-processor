@@ -20,7 +20,7 @@ class CspController extends Controller
                 return response()->json([
                     'error' => 'Malformed CSP report data',
                     'details' => $report
-                ], 400);
+                ], 421);
             }
 
             // Extract relevant information from the CSP report
@@ -37,7 +37,7 @@ class CspController extends Controller
             $domainName = parse_url($documentUri, PHP_URL_HOST);
 
             if (!$domainName) {
-                return response()->json(['error' => 'Invalid document URI'], 400);
+                return response()->json(['error' => 'Invalid document URI'], 420);
             }
 
             // Create or find the domain
