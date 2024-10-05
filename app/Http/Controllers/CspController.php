@@ -16,7 +16,14 @@ class CspController extends Controller
             Log::info('Full CSP Report Payload', ['request' => $request->all()]);
             Log::info('Raw Payload Structure', ['payload' => json_encode($request->all(), JSON_PRETTY_PRINT)]);
             // Extract the csp-report section
-            $report = $request->input('csp-report');
+            if ($request->header('Content-Type') === 'application/csp-report') {
+                $rawBody = $request->getContent();
+                $report = json_decode($rawBody, true);
+            } else {
+                // Fall back to standard request parsing
+                $report = $request->input('csp-report');
+            }
+
             Log::info('Extracted CSP Report', ['csp-report' => $report]);
 
             // Check if the report contains necessary fields
