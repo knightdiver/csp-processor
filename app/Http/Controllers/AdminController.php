@@ -19,10 +19,18 @@ class AdminController extends Controller
     }
 
     // Shows detailed reports for a specific domain
-    public function show(Domain $domain)
+    public function show($domainId)
     {
-        // Load the specific reports for the given domain
-        $reports = CspReport::where('domain_id', $domain->id)->get();
+        $domain = Domain::findOrFail($domainId);
+
+        // Get sorting parameters
+        $sort = request('sort', 'created_at'); // Default sort by 'created_at'
+        $direction = request('direction', 'asc'); // Default direction is ascending
+
+        // Fetch reports with sorting
+        $reports = CspReport::where('domain_id', $domainId)
+            ->orderBy($sort, $direction)
+            ->get();
 
         return view('admin.report-details', compact('domain', 'reports'));
     }

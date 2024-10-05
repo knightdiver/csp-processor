@@ -9,25 +9,70 @@
 <body class="bg-gray-100 font-sans">
 
 <div class="container mx-auto py-10">
-    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">CSP Reports for {{ $domain->domain_name }}</h1>
 
-    <div class="grid grid-cols-4 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
-        <div>Violated Directive</div>
-        <div>Blocked URI</div>
-        <div>Status Code</div>
-        <div>Script Sample</div>
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{{ route('reports.index') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">
+            ← Back to All Reports
+        </a>
+    </div>
+    
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
+        CSP Reports for {{ $domain->domain_name }}
+    </h1>
+
+    <div class="grid grid-cols-5 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'document_uri', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Document URI
+                @if(request('sort') === 'document_uri')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'violated_directive', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Violated Directive
+                @if(request('sort') === 'violated_directive')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'blocked_uri', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Blocked URI
+                @if(request('sort') === 'blocked_uri')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'status_code', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Status Code
+                @if(request('sort') === 'status_code')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'script_sample', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Script Sample
+                @if(request('sort') === 'script_sample')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
     </div>
 
     @foreach($reports as $report)
-        <div class="grid grid-cols-4 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white">
-            <div class="col-span-1">{{ $report->violated_directive }}</div>
-            <div class="col-span-1">{{ $report->blocked_uri }}</div>
-            <div class="col-span-1">{{ $report->status_code }}</div>
-            <div class="col-span-1">{{ $report->script_sample }}</div>
+        <div class="grid grid-cols-5 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white">
+            <div>{{ $report->document_uri }}</div>
+            <div>{{ $report->violated_directive }}</div>
+            <div>{{ $report->blocked_uri }}</div>
+            <div>{{ $report->status_code }}</div>
+            <div>{{ $report->script_sample }}</div>
         </div>
     @endforeach
-</div>
-
 
 </div>
 
