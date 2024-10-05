@@ -45,13 +45,8 @@ class CspController extends Controller
 
             // Extract relevant information from the CSP report
             $documentUri = $report['document-uri'] ?? null;
-            $referrer = $report['referrer'] ?? null;
             $violatedDirective = $report['violated-directive'] ?? null;
-            $effectiveDirective = $report['effective-directive'] ?? null;
-            $originalPolicy = $report['original-policy'] ?? null;
             $blockedUri = $report['blocked-uri'] ?? null;
-            $statusCode = $report['status-code'] ?? null;
-            $scriptSample = $report['script-sample'] ?? null;
 
             // Extract domain from document URI
             $domainName = parse_url($documentUri, PHP_URL_HOST);
@@ -63,7 +58,7 @@ class CspController extends Controller
             // Create or find the domain
             $domain = Domain::firstOrCreate(['domain_name' => $domainName]);
 
-            // Check for an existing report with the same violated directive and blocked URI
+            // Deduplication Check: Check for an existing report with the same violated directive and blocked URI
             $existingReport = CspReport::where('violated_directive', $violatedDirective)
                 ->where('blocked_uri', $blockedUri)
                 ->where('domain_id', $domain->id)
@@ -77,16 +72,16 @@ class CspController extends Controller
                 return response()->json(['status' => 'Duplicate report ignored'], 200);
             }
 
-            // Store the CSP report in the database
+            // Proceed to store the report if not a duplicate
             CspReport::create([
                 'document_uri' => $documentUri,
-                'referrer' => $referrer,
+                'referrer' => $report['referrer'] ?? null,
                 'violated_directive' => $violatedDirective,
-                'effective_directive' => $effectiveDirective,
-                'original_policy' => $originalPolicy,
+                'effective_directive' => $report['effective-directive'] ?? null,
+                'original_policy' => $report['original-policy'] ?? null,
                 'blocked_uri' => $blockedUri,
-                'status_code' => $statusCode,
-                'script_sample' => $scriptSample,
+                'status_code' => $report['status-code'] ?? null,
+                'script_sample' => $report['script-sample'] ?? null,
                 'domain_id' => $domain->id,
             ]);
 
@@ -102,9 +97,11 @@ class CspController extends Controller
             ]);
 
             // Return detailed error message for debugging
-            return response()->json(['error' => 'Failed to process the CSP report',
+            return response()->json([
+                'error' => 'Failed to process the CSP report',
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),], 500);
+                'trace' => $e->getTraceAsString(),
+            ], 500);
         }
     }
 }
