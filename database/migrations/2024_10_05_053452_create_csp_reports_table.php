@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('csp_reports', function (Blueprint $table) {
-            $table->id();
-            $table->string('document_uri');
-            $table->string('referrer')->nullable();
-            $table->string('violated_directive');
-            $table->string('blocked_uri');
-            $table->string('source_file')->nullable();
-            $table->integer('line_number')->nullable();
-            $table->integer('column_number')->nullable();
-            $table->foreignId('domain_id')->constrained('domains')->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('csp_reports')) {
+            Schema::create('csp_reports', function (Blueprint $table) {
+                $table->id();
+                $table->string('document_uri');
+                $table->string('referrer')->nullable();
+                $table->string('violated_directive');
+                $table->string('blocked_uri');
+                $table->string('source_file')->nullable();
+                $table->integer('line_number')->nullable();
+                $table->integer('column_number')->nullable();
+                $table->unsignedBigInteger('domain_id');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

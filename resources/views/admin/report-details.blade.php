@@ -39,6 +39,14 @@
             </a>
         </div>
         <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'referrer', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Referrer
+                @if(request('sort') === 'referrer')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
             <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'status_code', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                 Status Code
                 @if(request('sort') === 'status_code')
@@ -60,8 +68,9 @@
         <div class="grid grid-cols-5 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white">
             <div>{{ $report->violated_directive }}</div>
             <div>{{ $report->blocked_uri }}</div>
-            <div>{{ $report->status_code }}</div>
-            <div>{{ $report->script_sample }}</div>
+            <div>{{ $report->referrer ?? 'N/A' }}</div>  <!-- Display Referrer Path -->
+            <div>{{ $report->status_code ?? 'N/A' }}</div>  <!-- Display Status Code -->
+            <div>{{ $report->script_sample ?? 'N/A' }}</div>  <!-- Display Script Sample -->
         </div>
     @endforeach
 

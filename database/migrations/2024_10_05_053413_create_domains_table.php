@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('domains', function (Blueprint $table) {
-            $table->id();
-            $table->string('domain_name')->unique();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('domains')) {
+            Schema::create('domains', function (Blueprint $table) {
+                $table->id();
+                $table->string('domain_name');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -45,8 +45,13 @@ class CspController extends Controller
 
             // Extract relevant information from the CSP report
             $documentUri = $report['document-uri'] ?? null;
+            $referrer = $report['referrer'] ?? null;  // Ensure referrer is extracted here
             $violatedDirective = $report['violated-directive'] ?? null;
+            $effectiveDirective = $report['effective-directive'] ?? null;
+            $originalPolicy = $report['original-policy'] ?? null;
             $blockedUri = $report['blocked-uri'] ?? null;
+            $statusCode = $report['status-code'] ?? null;
+            $scriptSample = $report['script-sample'] ?? null;
 
             // Extract domain from document URI
             $domainName = parse_url($documentUri, PHP_URL_HOST);
@@ -57,6 +62,9 @@ class CspController extends Controller
 
             // Create or find the domain
             $domain = Domain::firstOrCreate(['domain_name' => $domainName]);
+
+            // Parse the referrer to get only the path (if referrer is present)
+            $referrerPath = $referrer ? parse_url($referrer, PHP_URL_PATH) : null;
 
             // Deduplication Check: Check for an existing report with the same violated directive and blocked URI
             $existingReport = CspReport::where('violated_directive', $violatedDirective)
@@ -75,13 +83,13 @@ class CspController extends Controller
             // Proceed to store the report if not a duplicate
             CspReport::create([
                 'document_uri' => $documentUri,
-                'referrer' => $report['referrer'] ?? null,
+                'referrer' => $referrerPath,
                 'violated_directive' => $violatedDirective,
-                'effective_directive' => $report['effective-directive'] ?? null,
-                'original_policy' => $report['original-policy'] ?? null,
+                'effective_directive' => $effectiveDirective,
+                'original_policy' => $originalPolicy,
                 'blocked_uri' => $blockedUri,
-                'status_code' => $report['status-code'] ?? null,
-                'script_sample' => $report['script-sample'] ?? null,
+                'status_code' => $statusCode,
+                'script_sample' => $scriptSample,
                 'domain_id' => $domain->id,
             ]);
 
