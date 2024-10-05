@@ -19,6 +19,13 @@ class CspController extends Controller
             if ($request->header('Content-Type') === 'application/csp-report') {
                 $rawBody = $request->getContent();
                 $report = json_decode($rawBody, true);
+
+                // Check for the double-wrapped 'csp-report' and extract the inner one
+                if (isset($report['csp-report']['csp-report'])) {
+                    $report = $report['csp-report']['csp-report'];
+                } elseif (isset($report['csp-report'])) {
+                    $report = $report['csp-report'];
+                }
             } else {
                 // Fall back to standard request parsing
                 $report = $request->input('csp-report');
