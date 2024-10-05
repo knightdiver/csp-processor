@@ -21,6 +21,7 @@
         CSP Reports for {{ $domain->domain_name }}
     </h1>
 
+    <!-- Table Header with Sorting -->
     <div class="grid grid-cols-5 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
         <div>
             <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'violated_directive', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
@@ -64,13 +65,16 @@
         </div>
     </div>
 
+    <!-- Table Content -->
     @foreach($reports as $report)
         <div class="grid grid-cols-5 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white">
             <div>{{ $report->violated_directive }}</div>
-            <div>{{ $report->blocked_uri }}</div>
-            <div>{{ $report->referrer ?? 'N/A' }}</div>  <!-- Display Referrer Path -->
-            <div>{{ $report->status_code ?? 'N/A' }}</div>  <!-- Display Status Code -->
-            <div>{{ $report->script_sample ?? 'N/A' }}</div>  <!-- Display Script Sample -->
+            <div class="truncate max-w-xs" title="{{ $report->blocked_uri }}">{{ Str::limit($report->blocked_uri, 30) }}</div>
+            <div class="truncate max-w-xs" title="{{ $report->referrer ?? 'N/A' }}">
+                {{ parse_url($report->referrer, PHP_URL_PATH) ?? 'N/A' }}
+            </div>
+            <div>{{ $report->status_code ?? 'N/A' }}</div>
+            <div class="truncate max-w-xs" title="{{ $report->script_sample ?? 'N/A' }}">{{ Str::limit($report->script_sample, 30) }}</div>
         </div>
     @endforeach
 
