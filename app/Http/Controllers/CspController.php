@@ -20,7 +20,9 @@ class CspController extends Controller
             Log::info('Extracted CSP Report', ['csp-report' => $report]);
 
             // Check if the report contains necessary fields
-            if (!$report || !isset($report['document-uri'], $report['violated-directive'], $report['blocked-uri'])) {
+//            if (!$report || !isset($report['document-uri'], $report['violated-directive'], $report['blocked-uri'])) {
+            if (!$report) {
+
                 Log::error('Malformed CSP report data', ['received_report' => $report]);
                 return response()->json([
                     'error' => 'Malformed CSP report data',
