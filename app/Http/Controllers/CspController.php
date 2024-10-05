@@ -12,20 +12,41 @@ class CspController extends Controller
     {
         // Validate the incoming CSP report
         $report = $request->input('csp-report');
-        $domainName = parse_url($report['document-uri'], PHP_URL_HOST);
+
+        if (!$report) {
+            return response()->json(['error' => 'Invalid report data'], 400);
+        }
+
+        // Extract relevant information from the CSP report
+        $documentUri = $report['document-uri'] ?? null;
+        $referrer = $report['referrer'] ?? null;
+        $violatedDirective = $report['violated-directive'] ?? null;
+        $effectiveDirective = $report['effective-directive'] ?? null;
+        $originalPolicy = $report['original-policy'] ?? null;
+        $blockedUri = $report['blocked-uri'] ?? null;
+        $statusCode = $report['status-code'] ?? null;
+        $scriptSample = $report['script-sample'] ?? null;
+
+        // Extract domain from document URI
+        $domainName = parse_url($documentUri, PHP_URL_HOST);
+
+        if (!$domainName) {
+            return response()->json(['error' => 'Invalid document URI'], 400);
+        }
 
         // Create or find the domain
         $domain = Domain::firstOrCreate(['domain_name' => $domainName]);
 
         // Store the CSP report in the database
         CspReport::create([
-            'document_uri' => $report['document-uri'],
-            'referrer' => $report['referrer'] ?? null,
-            'violated_directive' => $report['violated-directive'],
-            'blocked_uri' => $report['blocked-uri'],
-            'source_file' => $report['source-file'] ?? null,
-            'line_number' => $report['line-number'] ?? null,
-            'column_number' => $report['column-number'] ?? null,
+            'document_uri' => $documentUri,
+            'referrer' => $referrer,
+            'violated_directive' => $violatedDirective,
+            'effective_directive' => $effectiveDirective,
+            'original_policy' => $originalPolicy,
+            'blocked_uri' => $blockedUri,
+            'status_code' => $statusCode,
+            'script_sample' => $scriptSample,
             'domain_id' => $domain->id,
         ]);
 
