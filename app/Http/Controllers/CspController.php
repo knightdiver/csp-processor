@@ -15,6 +15,7 @@ class CspController extends Controller
             // Log the entire request body
             Log::info('Full CSP Report Payload', ['request' => $request->all()]);
             Log::info('Raw Payload Structure', ['payload' => json_encode($request->all(), JSON_PRETTY_PRINT)]);
+
             // Extract the csp-report section
             if ($request->header('Content-Type') === 'application/csp-report') {
                 $rawBody = $request->getContent();
@@ -34,14 +35,12 @@ class CspController extends Controller
             Log::info('Extracted CSP Report', ['csp-report' => $report]);
 
             // Check if the report contains necessary fields
-//            if (!$report || !isset($report['document-uri'], $report['violated-directive'], $report['blocked-uri'])) {
-            if (!$report) {
-
+            if (!$report || !isset($report['document-uri'], $report['violated-directive'], $report['blocked-uri'])) {
                 Log::error('Malformed CSP report data', ['received_report' => $report]);
                 return response()->json([
                     'error' => 'Malformed CSP report data',
                     'details' => $report
-                ], 427);
+                ], 400);
             }
 
             // Extract relevant information from the CSP report
@@ -58,7 +57,7 @@ class CspController extends Controller
             $domainName = parse_url($documentUri, PHP_URL_HOST);
 
             if (!$domainName) {
-                return response()->json(['error' => 'Invalid document URI'], 420);
+                return response()->json(['error' => 'Invalid document URI'], 400);
             }
 
             // Create or find the domain

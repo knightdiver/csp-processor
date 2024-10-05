@@ -8,37 +8,62 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-<div class="container mx-auto py-10 px-4">
+<div class="container mx-auto py-10">
     <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">CSP Reports by Domain</h1>
 
-    <div class="overflow-hidden border rounded-lg shadow-lg">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-200">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Domain</th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Report Count</th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">View Reports</th>
-            </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-            @foreach($domains as $domain)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $domain->domain_name }}</td>
-                    <!-- Center Report Count -->
-                    <td class="px-6 py-4 text-center text-sm text-gray-600">{{ $domain->csp_reports_count }}</td>
-                    <!-- Center View Reports Link -->
-                    <td class="px-6 py-4 text-center">
-                        <a href="{{ route('reports.show', $domain->id) }}" class="text-blue-600 underline">
-                            View Reports
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+    <div class="grid grid-cols-4 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
+        <div>Domain</div>
+        <div>Report Count</div>
+        <div>View Reports</div>
+        <div>Reset Reports</div>
     </div>
 
+    @foreach($domains as $domain)
+        <div class="grid grid-cols-4 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white" id="domain-{{ $domain->id }}">
+            <div class="col-span-1">{{ $domain->domain_name }}</div>
+            <div class="col-span-1 text-center flex items-center justify-center" id="report-count-{{ $domain->id }}">
+                {{ $domain->csp_reports_count }}
+            </div>
+            <div class="col-span-1 text-center">
+                <a href="{{ route('reports.show', $domain->id) }}" class="text-blue-600 underline">
+                    View Reports
+                </a>
+            </div>
+            <div class="col-span-1 text-center">
+                <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded"
+                        onclick="resetDomainReports('{{ $domain->id }}')">
+                    Reset
+                </button>
+            </div>
+        </div>
+    @endforeach
+
 </div>
+
+<!-- Add the AJAX functionality to handle the reset without refreshing the page -->
+<script>
+    function resetDomainReports(domainId) {
+        if (confirm('Are you sure you want to reset all reports for this domain?')) {
+            fetch(`/admin/reports/reset/${domainId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('All reports for this domain have been reset.');
+
+                        // Update the report count to 0 without refreshing the page
+                        document.getElementById(`report-count-${domainId}`).innerText = '0';
+                    } else {
+                        alert('An error occurred while resetting the reports.');
+                    }
+                });
+        }
+    }
+</script>
 
 </body>
 </html>
