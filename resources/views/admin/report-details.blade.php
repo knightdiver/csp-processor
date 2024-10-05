@@ -38,7 +38,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
+            max-width: 300px;
+            font-size: 16px; /* Increased font size */
         }
 
         .expandable.expanded {
@@ -50,8 +51,8 @@
             cursor: pointer;
             display: inline-block;
             margin-right: 8px;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             background-image: url('https://img.icons8.com/ios-filled/50/000000/copy.png');
             background-size: contain;
             background-repeat: no-repeat;
@@ -116,12 +117,40 @@
         CSP Reports for {{ $domain->domain_name }}
     </h1>
 
-    <!-- Grid Header -->
+    <!-- Grid Header with Sorting -->
     <div class="grid-container grid-header text-gray-700 bg-gray-200">
-        <div>Violated Directive</div>
-        <div>Blocked URI</div>
-        <div>Referrer</div>
-        <div>Script Sample</div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'violated_directive', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Violated Directive
+                @if(request('sort') === 'violated_directive')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'blocked_uri', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Blocked URI & Copy
+                @if(request('sort') === 'blocked_uri')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'referrer', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Referrer
+                @if(request('sort') === 'referrer')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
+        <div>
+            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'script_sample', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                Script Sample
+                @if(request('sort') === 'script_sample')
+                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
+                @endif
+            </a>
+        </div>
     </div>
 
     <!-- Grid Content -->
