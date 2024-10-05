@@ -63,6 +63,20 @@ class CspController extends Controller
             // Create or find the domain
             $domain = Domain::firstOrCreate(['domain_name' => $domainName]);
 
+            // Check for an existing report with the same violated directive and blocked URI
+            $existingReport = CspReport::where('violated_directive', $violatedDirective)
+                ->where('blocked_uri', $blockedUri)
+                ->where('domain_id', $domain->id)
+                ->first();
+
+            if ($existingReport) {
+                Log::info('Duplicate CSP report detected and ignored', [
+                    'violated_directive' => $violatedDirective,
+                    'blocked_uri' => $blockedUri,
+                ]);
+                return response()->json(['status' => 'Duplicate report ignored'], 200);
+            }
+
             // Store the CSP report in the database
             CspReport::create([
                 'document_uri' => $documentUri,
