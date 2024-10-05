@@ -16,20 +16,12 @@
             ← Back to All Reports
         </a>
     </div>
-    
+
     <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
         CSP Reports for {{ $domain->domain_name }}
     </h1>
 
     <div class="grid grid-cols-5 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
-        <div>
-            <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'document_uri', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
-                Document URI
-                @if(request('sort') === 'document_uri')
-                    <span>{{ request('direction') === 'asc' ? '▲' : '▼' }}</span>
-                @endif
-            </a>
-        </div>
         <div>
             <a href="{{ route('reports.show', ['domain' => $domain->id, 'sort' => 'violated_directive', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                 Violated Directive
@@ -66,7 +58,6 @@
 
     @foreach($reports as $report)
         <div class="grid grid-cols-5 gap-4 py-4 px-2 border-b odd:bg-gray-50 even:bg-white">
-            <div>{{ $report->document_uri }}</div>
             <div>{{ $report->violated_directive }}</div>
             <div>{{ $report->blocked_uri }}</div>
             <div>{{ $report->status_code }}</div>
