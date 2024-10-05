@@ -21,7 +21,7 @@ class CspController extends Controller
                 return response()->json([
                     'error' => 'Malformed CSP report data',
                     'details' => $report
-                ], 421);
+                ], 427);
             }
 
             // Extract relevant information from the CSP report
