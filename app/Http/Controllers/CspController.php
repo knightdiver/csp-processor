@@ -12,12 +12,16 @@ class CspController extends Controller
     public function store(Request $request)
     {
         try {
+            // Log the entire request body
+            Log::info('Full CSP Report Payload', ['request' => $request->all()]);
 
-            // Validate the incoming CSP report
+            // Extract the csp-report section
             $report = $request->input('csp-report');
+            Log::info('Extracted CSP Report', ['csp-report' => $report]);
 
             // Check if the report contains necessary fields
             if (!$report || !isset($report['document-uri'], $report['violated-directive'], $report['blocked-uri'])) {
+                Log::error('Malformed CSP report data', ['received_report' => $report]);
                 return response()->json([
                     'error' => 'Malformed CSP report data',
                     'details' => $report
