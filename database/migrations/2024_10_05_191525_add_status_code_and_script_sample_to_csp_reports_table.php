@@ -20,8 +20,19 @@ class AddStatusCodeAndScriptSampleToCspReportsTable extends Migration
     public function down()
     {
         Schema::table('csp_reports', function (Blueprint $table) {
-            // Drop the newly added columns
-            $table->dropColumn(['status_code', 'script_sample', 'effective_directive', 'original_policy']);
+            // Check if the columns exist before trying to drop them
+            if (Schema::hasColumn('csp_reports', 'status_code')) {
+                $table->dropColumn('status_code');
+            }
+            if (Schema::hasColumn('csp_reports', 'script_sample')) {
+                $table->dropColumn('script_sample');
+            }
+            if (Schema::hasColumn('csp_reports', 'effective_directive')) {
+                $table->dropColumn('effective_directive');
+            }
+            if (Schema::hasColumn('csp_reports', 'original_policy')) {
+                $table->dropColumn('original_policy');
+            }
         });
     }
 }
