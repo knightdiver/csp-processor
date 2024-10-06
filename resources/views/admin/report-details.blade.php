@@ -78,28 +78,37 @@
         }
     </style>
     <script>
-        function copyToClipboard(text) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(function () {
-                    console.log('Copied to clipboard:', text);
-                }).catch(function (err) {
-                    console.error('Could not copy text: ', err);
-                });
-            } else {
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = text;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                try {
-                    document.execCommand('copy');
-                    console.log('Fallback: Copied to clipboard', text);
-                } catch (err) {
-                    console.error('Fallback: Could not copy text', err);
+        function copyToClipboard(uri) {
+            try {
+                // Use the URL object to extract the protocol and hostname
+                const url = new URL(uri);
+                const domainToCopy = `${url.protocol}//${url.hostname}`;
+
+                // Copy the domain to clipboard
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(domainToCopy).then(function () {
+                        console.log('Copied to clipboard:', domainToCopy);
+                    }).catch(function (err) {
+                        console.error('Could not copy text: ', err);
+                    });
+                } else {
+                    // Fallback for older browsers
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = domainToCopy;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    try {
+                        document.execCommand('copy');
+                        console.log('Fallback: Copied to clipboard', domainToCopy);
+                    } catch (err) {
+                        console.error('Fallback: Could not copy text', err);
+                    }
+                    document.body.removeChild(tempTextArea);
                 }
-                document.body.removeChild(tempTextArea);
+            } catch (error) {
+                console.error('Invalid URL: ', uri);
             }
         }
-
     </script>
 </head>
 <body class="bg-gray-100 font-sans">
