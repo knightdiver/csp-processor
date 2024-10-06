@@ -9,16 +9,19 @@ class AddStatusCodeAndScriptSampleToCspReportsTable extends Migration
     public function up()
     {
         Schema::table('csp_reports', function (Blueprint $table) {
-            $table->integer('status_code')->nullable()->after('blocked_uri'); // Adding status_code after blocked_uri
-            $table->text('script_sample')->nullable()->after('status_code'); // Adding script_sample after status_code
+            // Add new columns
+            $table->integer('status_code')->after('blocked_uri')->nullable();
+            $table->text('script_sample')->after('status_code')->nullable();
+            $table->string('effective_directive')->after('violated_directive')->nullable(); // New column
+            $table->text('original_policy')->after('effective_directive')->nullable(); // New column
         });
     }
 
     public function down()
     {
         Schema::table('csp_reports', function (Blueprint $table) {
-            $table->dropColumn(['status_code', 'script_sample']);
+            // Drop the newly added columns
+            $table->dropColumn(['status_code', 'script_sample', 'effective_directive', 'original_policy']);
         });
     }
 }
-

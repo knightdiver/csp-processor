@@ -17,7 +17,11 @@ class CspReport extends Model
         'source_file',
         'line_number',
         'column_number',
-        'domain_id'
+        'domain_id',
+        'status_code',
+        'script_sample',
+        'effective_directive',
+        'original_policy'
     ];
 
     // Define the relationship to the Domain model
