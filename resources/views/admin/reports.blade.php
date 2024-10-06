@@ -11,6 +11,20 @@
 <div class="container mx-auto py-10">
     <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">CSP Reports by Domain</h1>
 
+    <!-- Buttons for populating and resetting test data -->
+    @if (App::environment(['local', 'staging', 'testing']))
+        <div class="flex justify-center gap-4 mb-6">
+            <button class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
+                    onclick="populateTestData()">
+                Populate Test Data
+            </button>
+            <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                    onclick="resetAllData()">
+                Reset All Data
+            </button>
+        </div>
+    @endif
+
     <div class="grid grid-cols-4 gap-4 text-center font-semibold text-gray-700 bg-gray-200 py-3 rounded-t-lg">
         <div>Domain</div>
         <div>Report Count</div>
@@ -40,7 +54,7 @@
 
 </div>
 
-<!-- Add the AJAX functionality to handle the reset without refreshing the page -->
+<!-- Add the AJAX functionality to handle the actions without refreshing the page -->
 <script>
     function resetDomainReports(domainId) {
         if (confirm('Are you sure you want to reset all reports for this domain?')) {
@@ -54,11 +68,49 @@
                 .then(data => {
                     if (data.success) {
                         alert('All reports for this domain have been reset.');
-
-                        // Update the report count to 0 without refreshing the page
                         document.getElementById(`report-count-${domainId}`).innerText = '0';
                     } else {
                         alert('An error occurred while resetting the reports.');
+                    }
+                });
+        }
+    }
+
+    function populateTestData() {
+        if (confirm('Are you sure you want to populate the database with test data?')) {
+            fetch(`/api/test/populate`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        location.reload(); // Refresh the page to update the report counts
+                    } else {
+                        alert('An error occurred while populating test data.');
+                    }
+                });
+        }
+    }
+
+    function resetAllReports() {
+        if (confirm('Are you sure you want to reset all reports? This will delete all data.')) {
+            fetch(`/api/test/reset`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        location.reload(); // Refresh the page to update the report counts
+                    } else {
+                        alert('An error occurred while resetting the data.');
                     }
                 });
         }

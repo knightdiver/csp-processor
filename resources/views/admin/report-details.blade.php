@@ -76,6 +76,14 @@
             padding: 12px 15px;
             border-bottom: 1px solid #ddd;
         }
+
+        .csp-block {
+            background-color: #f3f4f6;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
     </style>
     <script>
         function copyToClipboard(uri) {
@@ -125,6 +133,24 @@
     <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
         CSP Reports for {{ $domain->domain_name }}
     </h1>
+
+    <!-- Suggested CSP Block -->
+    <div class="bg-gray-200 p-4 rounded mb-6">
+        <h2 class="text-lg font-bold mb-4">Suggested CSP</h2>
+        <pre class="bg-gray-100 p-3 rounded">
+@foreach($cspDirectives as $directive => $sources)
+                {{ $directive }} {{ implode(' ', $sources) }};
+            @endforeach
+    </pre>
+        <p class="text-sm text-gray-600 mt-2">
+            Note: Using 'unsafe-inline' or 'unsafe-eval' weakens the security of your CSP. Consider refactoring your code to avoid inline scripts or dynamic script evaluation.
+        </p>
+        <p class="text-sm text-gray-600">
+            Consider replacing 'data:' URIs with hosted resources where possible for better security.
+        </p>
+    </div>
+
+
 
     <!-- Grid Header with Sorting -->
     <div class="grid-container grid-header text-gray-700 bg-gray-200">
