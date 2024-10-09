@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::table('csp_reports', function (Blueprint $table) {
             $table->string('blocked_uri', 2048)->change();
+
         });
     }
 
@@ -17,6 +18,7 @@ return new class extends Migration
     {
         Schema::table('csp_reports', function (Blueprint $table) {
             $table->string('blocked_uri', 255)->change(); // Revert to previous length if necessary
+
         });
     }
 };
