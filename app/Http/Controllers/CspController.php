@@ -49,8 +49,7 @@ class CspController extends Controller
             $violatedDirective = $report['violated-directive'] ?? null;
             $effectiveDirective = $report['effective-directive'] ?? null;
             $originalPolicy = $report['original-policy'] ?? null;
-            //$blockedUri = $report['blocked-uri'] ?? null;
-            $blockedUri = substr($report['blocked-uri'], 0, 2048);
+            $blockedUri = $report['blocked-uri'] ?? null;
             $statusCode = $report['status-code'] ?? null;
             $scriptSample = $report['script-sample'] ?? null;
 
